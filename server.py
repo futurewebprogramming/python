@@ -20,12 +20,17 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
         elif self.path == "/blog":
             self.path = "/templates/blog.html"
         else:
-            self.path=='/templates/blog.html'
-            print(self.send_error(404, "Page not found"))
+            self.send_response(404)  # Set the HTTP 404 status code
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+
+            # Load and serve the 404.html page
+            with open("templates/404.html", "rb") as f:
+                self.wfile.write(f.read())
             return
 
-        return http.server.SimpleHTTPRequestHandler.do_GET(self)# ... Your existing code for handling routes ...
-
+        # Call the parent class method to serve the requested file
+        return http.server.SimpleHTTPRequestHandler.do_GET(self)
 class Watcher:
     def __init__(self):
         self.observer = Observer()
